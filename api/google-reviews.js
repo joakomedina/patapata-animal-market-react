@@ -3,10 +3,12 @@ let cachedAt = 0;
 let cachedPayload = null;
 
 function normalizeReview(review) {
+  const original = review?.originalText?.text || "";
+  const localized = review?.text?.text || "";
   return {
     author: review?.authorAttribution?.displayName || "Cliente",
     rating: Number(review?.rating || 0),
-    text: review?.text?.text || "",
+    text: original || localized,
     relativeTime: review?.relativePublishTimeDescription || "",
   };
 }
@@ -16,8 +18,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  const forceRefresh = req.query?.refresh === "1";
   const now = Date.now();
-  if (cachedPayload && now - cachedAt < CACHE_TTL_MS) {
+  if (!forceRefresh && cachedPayload && now - cachedAt < CACHE_TTL_MS) {
     return res.status(200).json({ ...cachedPayload, cached: true });
   }
 
@@ -35,13 +38,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const detailsUrl = `https://places.googleapis.com/v1/places/${placeId}`;
+    const detailsUrl = `https://places.googleapis.com/v1/places/${placeId}?languageCode=es&regionCode=VE`;
     const upstream = await fetch(detailsUrl, {
       method: "GET",
       headers: {
         "X-Goog-Api-Key": apiKey,
         "X-Goog-FieldMask":
-          "displayName,rating,userRatingCount,reviews.authorAttribution,reviews.rating,reviews.text,reviews.relativePublishTimeDescription",
+          "displayName,rating,userRatingCount,reviews.authorAttribution,reviews.rating,reviews.text,reviews.originalText,reviews.relativePublishTimeDescription",
       },
     });
 
