@@ -199,12 +199,16 @@ a {
 
 .pill {
   margin-top: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 2px solid #1f1f1f;
   background: transparent;
   border-radius: 999px;
-  min-width: 154px;
-  height: 46px;
-  font: 700 12px/1 "Montserrat", Arial, sans-serif;
+  min-width: 170px;
+  height: 54px;
+  padding: 0 20px;
+  font: 700 13px/1 "Montserrat", Arial, sans-serif;
   letter-spacing: 2px;
 }
 
@@ -221,11 +225,6 @@ a {
 .pill.yellow {
   border-color: #dbd83b;
   color: #d6c834;
-}
-
-.pill.dark {
-  border-color: #1f1f1f;
-  color: #1f1f1f;
 }
 
 .quote {

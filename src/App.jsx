@@ -39,18 +39,21 @@ const secondCards = [
     text: "Ofrecemos servicios especializados para gestionar la documentacion necesaria en tus viajes. Nos encargamos de reservas, permisos, itinerarios y requisitos legales.",
     button: "CONTACTA",
     img: "/patapata/patapata_4.jpg",
+    tone: "blue",
   },
   {
     title: "ENTRENAMIENTO",
     text: "Brindamos servicios de entrenamiento personalizado para mascotas, adaptado a sus necesidades y caracter. Ensenamos obediencia basica, correccion de conductas.",
     button: "RESERVA",
     img: "/patapata/patapata_5.jpg",
+    tone: "pink",
   },
   {
     title: "HOSPEDAJE",
     text: "Brindamos hospedaje para mascotas con atencion personalizada, espacios comodos y supervision constante, preocupados por su bienestar mientras estas de vacaciones.",
     button: "PREGUNTA",
     img: "/patapata/patapata_6.jpg",
+    tone: "yellow",
   },
 ];
 
@@ -342,7 +345,7 @@ function HomePage({ scrollToContact = false }) {
                 <img src={item.img} alt={item.title} className="card-image" />
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
-                <Link className="pill dark" to={`/agenda?servicio=${encodeURIComponent(item.title)}`}>
+                <Link className={`pill ${item.tone}`} to={`/agenda?servicio=${encodeURIComponent(item.title)}`}>
                   {item.button}
                 </Link>
               </article>
