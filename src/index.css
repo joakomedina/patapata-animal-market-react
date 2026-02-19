@@ -268,10 +268,10 @@ a {
   margin-bottom: 8px;
 }
 
-.testi-grid p {
+.testimonials .testi-grid p {
   margin: 0;
   color: #1f2c3d;
-  font: 600 16px/1.5 "Montserrat", Arial, sans-serif;
+  font: 600 16px/1.5 "Montserrat", Arial, sans-serif !important;
 }
 
 .testi-grid span {
@@ -802,7 +802,7 @@ a {
   }
 
   .intro p,
-  .testi-grid p {
+  .testimonials .testi-grid p {
     font-size: 16px;
   }
 
