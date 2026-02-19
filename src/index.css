@@ -792,9 +792,12 @@ a {
   }
 
   .intro p,
-  .card p,
   .testi-grid p {
     font-size: 18px;
+  }
+
+  .card p {
+    font-size: 24px;
   }
 
   .card h3 {
