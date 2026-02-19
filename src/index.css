@@ -181,7 +181,7 @@ a {
 
 .card h3 {
   margin: 18px 0 12px;
-  font: 800 42px/1 "Montserrat", Arial, sans-serif;
+  font: 800 24px/1.15 "Montserrat", Arial, sans-serif;
   color: #233042;
 }
 
@@ -190,6 +190,11 @@ a {
   font: 400 24px/1.55 "Open Sans", Arial, sans-serif;
   color: #556070;
   min-height: 170px;
+}
+
+.cards-one .card p,
+.cards-two .card p {
+  font-size: 24px !important;
 }
 
 .pill {
