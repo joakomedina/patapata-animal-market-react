@@ -250,6 +250,12 @@ a {
   font: 700 29px/1.2 "Montserrat", Arial, sans-serif;
 }
 
+.reviews-meta {
+  margin: -12px 0 20px;
+  color: #465366;
+  font-size: 14px;
+}
+
 .testi-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

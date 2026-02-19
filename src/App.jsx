@@ -263,6 +263,7 @@ function SiteFooter() {
 
 function HomePage({ scrollToContact = false }) {
   const [openFaq, setOpenFaq] = useState(null);
+  const [googleReviews, setGoogleReviews] = useState(null);
 
   useEffect(() => {
     if (scrollToContact) {
@@ -272,6 +273,47 @@ function HomePage({ scrollToContact = false }) {
       }
     }
   }, [scrollToContact]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    fetch("/api/google-reviews")
+      .then((res) => res.json())
+      .then((data) => {
+        if (mounted) setGoogleReviews(data);
+      })
+      .catch(() => {
+        if (mounted) setGoogleReviews(null);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const fallbackReviews = [
+    {
+      rating: 5,
+      text:
+        "\"Excelente atencion, muy feliz porque consegui muchos cositas para mi perrito, snacks, juguetes y articulos para el cuidado de mi peludito, y lo mejor de todo tienen excelentes precios.\"",
+      author: "LP Morales",
+    },
+    {
+      rating: 5,
+      text:
+        "\"Excelente atencion, desde que contactas por mensajeria, muy bien ubicados en Sabana Grande, personal especializado. Los visitaremos nuevamente muy pronto.\"",
+      author: "Dary Guerra",
+    },
+  ];
+
+  const reviewItems =
+    googleReviews?.source === "google" && Array.isArray(googleReviews?.reviews) && googleReviews.reviews.length
+      ? googleReviews.reviews.slice(0, 3).map((item) => ({
+          rating: item.rating || 5,
+          text: item.text,
+          author: item.author || "Cliente",
+        }))
+      : fallbackReviews;
 
   return (
     <main>
@@ -357,23 +399,20 @@ function HomePage({ scrollToContact = false }) {
       <section className="testimonials">
         <div className="container">
           <h3>Lo que dicen de nosotros:</h3>
+          {googleReviews?.source === "google" && googleReviews?.rating ? (
+            <p className="reviews-meta">
+              Google rating: <strong>{googleReviews.rating.toFixed(1)}</strong>
+              {googleReviews.userRatingCount ? ` (${googleReviews.userRatingCount} reseñas)` : ""}
+            </p>
+          ) : null}
           <div className="testi-grid">
-            <article>
-              <div className="stars">*****</div>
-              <p>
-                "Excelente atencion, muy feliz porque consegui muchos cositas para mi perrito, snacks, juguetes y
-                articulos para el cuidado de mi peludito, y lo mejor de todo tienen excelentes precios."
-              </p>
-              <span>LP Morales</span>
-            </article>
-            <article>
-              <div className="stars">*****</div>
-              <p>
-                "Excelente atencion, desde que contactas por mensajeria, muy bien ubicados en Sabana Grande, personal
-                especializado. Los visitaremos nuevamente muy pronto."
-              </p>
-              <span>Dary Guerra</span>
-            </article>
+            {reviewItems.map((item, idx) => (
+              <article key={`${item.author}-${idx}`}>
+                <div className="stars">{"*".repeat(Math.max(1, Math.min(5, Number(item.rating) || 5)))}</div>
+                <p>{item.text}</p>
+                <span>{item.author}</span>
+              </article>
+            ))}
           </div>
         </div>
       </section>
