@@ -6,7 +6,7 @@ const nav = [
   { label: "Inicio", type: "path", to: "/" },
   { label: "Peluqueria canina", type: "path", to: "/peluqueria-canina#nuestros-servicios" },
   { label: "Agenda", type: "path", to: "/agenda" },
-  { label: "Contacto", type: "path", to: "/contacto" },
+  { label: "Contacto", type: "hash", to: "#contacto" },
 ];
 
 const firstCards = [
