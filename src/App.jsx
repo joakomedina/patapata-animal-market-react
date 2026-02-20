@@ -264,6 +264,8 @@ function SiteFooter() {
 function HomePage({ scrollToContact = false }) {
   const [openFaq, setOpenFaq] = useState(null);
   const [googleReviews, setGoogleReviews] = useState(null);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [reviewIndex, setReviewIndex] = useState(0);
 
   useEffect(() => {
     if (scrollToContact) {
@@ -280,10 +282,16 @@ function HomePage({ scrollToContact = false }) {
     fetch("/api/google-reviews")
       .then((res) => res.json())
       .then((data) => {
-        if (mounted) setGoogleReviews(data);
+        if (mounted) {
+          setGoogleReviews(data);
+          setReviewsLoading(false);
+        }
       })
       .catch(() => {
-        if (mounted) setGoogleReviews(null);
+        if (mounted) {
+          setGoogleReviews(null);
+          setReviewsLoading(false);
+        }
       });
 
     return () => {
@@ -291,29 +299,22 @@ function HomePage({ scrollToContact = false }) {
     };
   }, []);
 
-  const fallbackReviews = [
-    {
-      rating: 5,
-      text:
-        "\"Excelente atencion, muy feliz porque consegui muchos cositas para mi perrito, snacks, juguetes y articulos para el cuidado de mi peludito, y lo mejor de todo tienen excelentes precios.\"",
-      author: "LP Morales",
-    },
-    {
-      rating: 5,
-      text:
-        "\"Excelente atencion, desde que contactas por mensajeria, muy bien ubicados en Sabana Grande, personal especializado. Los visitaremos nuevamente muy pronto.\"",
-      author: "Dary Guerra",
-    },
-  ];
-
   const reviewItems =
     googleReviews?.source === "google" && Array.isArray(googleReviews?.reviews) && googleReviews.reviews.length
-      ? googleReviews.reviews.slice(0, 3).map((item) => ({
+      ? googleReviews.reviews.slice(0, 5).map((item) => ({
           rating: item.rating || 5,
           text: item.text,
           author: item.author || "Cliente",
         }))
-      : fallbackReviews;
+      : [];
+
+  useEffect(() => {
+    if (reviewItems.length <= 1) return;
+    const timer = setInterval(() => {
+      setReviewIndex((prev) => (prev + 1) % reviewItems.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [reviewItems.length]);
 
   return (
     <main>
@@ -405,15 +406,34 @@ function HomePage({ scrollToContact = false }) {
               {googleReviews.userRatingCount ? ` (${googleReviews.userRatingCount} reseñas)` : ""}
             </p>
           ) : null}
-          <div className="testi-grid">
-            {reviewItems.map((item, idx) => (
-              <article key={`${item.author}-${idx}`}>
-                <div className="stars">{"*".repeat(Math.max(1, Math.min(5, Number(item.rating) || 5)))}</div>
-                <p>{item.text}</p>
-                <span>{item.author}</span>
+          {reviewsLoading ? (
+            <p className="reviews-meta">Cargando reseñas...</p>
+          ) : reviewItems.length ? (
+            <div className="testi-carousel">
+              <article className="testi-card">
+                <div className="stars">
+                  {"*".repeat(Math.max(1, Math.min(5, Number(reviewItems[reviewIndex]?.rating) || 5)))}
+                </div>
+                <p>{reviewItems[reviewIndex]?.text}</p>
+                <span>{reviewItems[reviewIndex]?.author}</span>
               </article>
-            ))}
-          </div>
+              {reviewItems.length > 1 ? (
+                <div className="testi-dots" role="tablist" aria-label="Seleccionar reseña">
+                  {reviewItems.map((item, idx) => (
+                    <button
+                      key={`${item.author}-${idx}`}
+                      type="button"
+                      className={`testi-dot ${idx === reviewIndex ? "active" : ""}`}
+                      onClick={() => setReviewIndex(idx)}
+                      aria-label={`Ver reseña ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <p className="reviews-meta">No se pudieron cargar reseñas de Google en este momento.</p>
+          )}
         </div>
       </section>
 
